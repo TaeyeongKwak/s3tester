@@ -11,14 +11,14 @@ import subprocess
 import sys
 import tempfile
 import boto3
-from moto import mock_s3
+from moto import mock_aws
 from pathlib import Path
 
 
 class TestBasicBucketOperationsIntegration:
     """Integration tests for basic bucket operations workflow."""
 
-    @mock_s3
+    @mock_aws
     def test_basic_bucket_workflow_with_moto(self):
         """Test complete bucket workflow: Create → Head → List → Delete using moto."""
         # This test defines the expected integration behavior
@@ -94,7 +94,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_create_bucket_success(self):
         """Test CreateBucket operation integration."""
         config_content = """
@@ -134,7 +134,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_create_duplicate_bucket_error(self):
         """Test CreateBucket operation fails when bucket already exists."""
         config_content = """
@@ -181,7 +181,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_head_bucket_existing_bucket(self):
         """Test HeadBucket operation on existing bucket."""
         # Pre-create bucket using boto3
@@ -230,7 +230,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_head_bucket_nonexistent_bucket(self):
         """Test HeadBucket operation on nonexistent bucket."""
         config_content = """
@@ -271,7 +271,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_list_buckets_empty(self):
         """Test ListBuckets operation when no buckets exist."""
         config_content = """
@@ -311,7 +311,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_list_buckets_with_existing_buckets(self):
         """Test ListBuckets operation with pre-existing buckets."""
         # Pre-create some buckets
@@ -363,7 +363,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_delete_bucket_success(self):
         """Test DeleteBucket operation on existing empty bucket."""
         # Pre-create bucket
@@ -412,7 +412,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_delete_nonexistent_bucket(self):
         """Test DeleteBucket operation on nonexistent bucket."""
         config_content = """
@@ -457,7 +457,7 @@ test_cases:
 class TestBucketOperationsResultValidation:
     """Integration tests for bucket operations result validation."""
 
-    @mock_s3
+    @mock_aws
     def test_result_comparison_exact_match(self):
         """Test that exact result matching works correctly."""
         config_content = """
@@ -498,7 +498,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_result_comparison_mismatch(self):
         """Test that result mismatches are detected and reported."""
         config_content = """
@@ -539,7 +539,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3 
+    @mock_aws 
     def test_sequential_operation_dependencies(self):
         """Test that operations in a group run sequentially with proper dependencies."""
         config_content = """

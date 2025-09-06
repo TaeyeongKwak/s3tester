@@ -11,7 +11,7 @@ import subprocess
 import sys
 import tempfile
 import boto3
-from moto import mock_s3
+from moto import mock_aws
 from pathlib import Path
 import time
 
@@ -19,7 +19,7 @@ import time
 class TestParallelExecutionIntegration:
     """Integration tests for parallel execution functionality."""
 
-    @mock_s3
+    @mock_aws
     def test_parallel_bucket_operations(self):
         """Test parallel execution of independent bucket operations."""
         config_content = """
@@ -95,7 +95,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_sequential_vs_parallel_execution(self):
         """Test that sequential and parallel modes produce different execution times."""
         config_content = """
@@ -181,7 +181,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_parallel_object_operations(self):
         """Test parallel execution of object operations."""
         # Pre-create bucket
@@ -276,7 +276,7 @@ test_cases:
                 Path(file_path).unlink(missing_ok=True)
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_parallel_execution_error_handling(self):
         """Test error handling in parallel execution scenarios."""
         config_content = """
@@ -352,7 +352,7 @@ test_cases:
 class TestParallelExecutionResultAggregation:
     """Integration tests for result aggregation in parallel execution."""
 
-    @mock_s3
+    @mock_aws
     def test_parallel_results_aggregation(self):
         """Test that results from parallel operations are properly aggregated."""
         config_content = """
@@ -413,7 +413,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_parallel_execution_statistics(self):
         """Test that parallel execution provides performance statistics."""
         config_content = """
@@ -487,7 +487,7 @@ test_cases:
 class TestParallelExecutionMixedGroups:
     """Integration tests for mixed parallel/sequential group execution."""
 
-    @mock_s3
+    @mock_aws
     def test_mixed_parallel_sequential_groups(self):
         """Test execution of mixed parallel and sequential groups."""
         config_content = """
@@ -601,7 +601,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_global_parallel_flag_behavior(self):
         """Test behavior of global --parallel flag with mixed group configurations."""
         config_content = """
@@ -674,7 +674,7 @@ test_cases:
 class TestParallelExecutionLimitations:
     """Integration tests for parallel execution limitations and constraints."""
 
-    @mock_s3
+    @mock_aws
     def test_dependent_operations_sequential_execution(self):
         """Test that dependent operations are executed sequentially even in parallel mode."""
         config_content = """
@@ -753,7 +753,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_parallel_execution_resource_limits(self):
         """Test parallel execution with resource constraints."""
         # Create many operations to test resource limits

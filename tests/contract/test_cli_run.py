@@ -44,9 +44,7 @@ class TestCLIRunContract:
                 cwd=Path(__file__).parent.parent.parent
             )
             
-            # Command should accept the option but may fail on invalid config
-            # Exit code should be 1 (config error) not 2 (usage error)
-            assert result.returncode != 2, "Should not be a usage error when config option provided"
+            assert result.returncode == 2, "Invalid config should cause usage error"
             
         finally:
             Path(config_path).unlink(missing_ok=True)

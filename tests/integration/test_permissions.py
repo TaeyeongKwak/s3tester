@@ -11,14 +11,14 @@ import subprocess
 import sys
 import tempfile
 import boto3
-from moto import mock_s3
+from moto import mock_aws
 from pathlib import Path
 
 
 class TestMultipleCredentialsIntegration:
     """Integration tests for multiple credentials scenarios."""
 
-    @mock_s3
+    @mock_aws
     def test_multiple_credentials_different_permissions(self):
         """Test operations with multiple credential sets having different permissions."""
         # Pre-setup different "environments" using different credential names
@@ -139,7 +139,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_credential_specific_group_execution(self):
         """Test that groups can specify which credentials to use."""
         config_content = """
@@ -199,7 +199,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_access_denied_scenarios(self):
         """Test explicit access denied scenarios and error handling."""
         config_content = """
@@ -262,7 +262,7 @@ test_cases:
 class TestCrossCredentialOperations:
     """Integration tests for operations across different credential sets."""
 
-    @mock_s3
+    @mock_aws
     def test_bucket_access_across_credentials(self):
         """Test accessing buckets created by different credentials."""
         # Pre-setup: create buckets with different credential contexts
@@ -355,7 +355,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_object_access_permissions(self):
         """Test object-level access permissions across credentials."""
         # Pre-setup objects with different credentials
@@ -451,7 +451,7 @@ test_cases:
 class TestCredentialValidationScenarios:
     """Integration tests for credential validation scenarios."""
 
-    @mock_s3
+    @mock_aws
     def test_invalid_credential_formats(self):
         """Test handling of invalid credential formats."""
         config_content = """
@@ -513,7 +513,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_expired_or_suspended_credentials(self):
         """Test handling of expired or suspended credentials."""
         # This test simulates credential issues that might occur in real scenarios
@@ -571,7 +571,7 @@ test_cases:
 class TestPermissionTestResultReporting:
     """Integration tests for permission test result reporting."""
 
-    @mock_s3
+    @mock_aws
     def test_permission_test_results_in_output(self):
         """Test that permission test results are properly reported."""
         config_content = """
@@ -638,7 +638,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_mixed_permission_results(self):
         """Test reporting when some operations succeed and others fail due to permissions."""
         # Pre-create a bucket for testing

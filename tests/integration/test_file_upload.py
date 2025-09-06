@@ -11,7 +11,7 @@ import subprocess
 import sys
 import tempfile
 import boto3
-from moto import mock_s3
+from moto import mock_aws
 from pathlib import Path
 import os
 
@@ -19,7 +19,7 @@ import os
 class TestFileUploadWorkflowIntegration:
     """Integration tests for file upload workflow."""
 
-    @mock_s3
+    @mock_aws
     def test_complete_file_upload_workflow(self):
         """Test complete file upload workflow with file:// references."""
         # Create test file content
@@ -114,7 +114,7 @@ test_cases:
                 Path(config_path).unlink(missing_ok=True)
                 Path(test_file_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_put_object_with_file_reference(self):
         """Test PutObject operation with file:// reference."""
         # Create test file with specific content
@@ -174,7 +174,7 @@ test_cases:
             Path(config_path).unlink(missing_ok=True)
             Path(test_file_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_put_object_large_file(self):
         """Test PutObject operation with larger file content."""
         # Create larger test file (1MB)
@@ -242,7 +242,7 @@ test_cases:
             Path(config_path).unlink(missing_ok=True)
             Path(test_file_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_get_object_to_file(self):
         """Test GetObject operation saving to file."""
         # Pre-setup: create bucket and object
@@ -304,7 +304,7 @@ test_cases:
             finally:
                 Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_put_object_with_metadata(self):
         """Test PutObject operation with custom metadata."""
         test_content = "Content with metadata"
@@ -379,7 +379,7 @@ test_cases:
             Path(config_path).unlink(missing_ok=True)
             Path(test_file_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_file_upload_error_handling(self):
         """Test error handling in file upload operations."""
         config_content = """
@@ -436,7 +436,7 @@ test_cases:
 class TestFileReferenceResolution:
     """Integration tests for file reference resolution in operations."""
 
-    @mock_s3
+    @mock_aws
     def test_relative_file_path_resolution(self):
         """Test that relative file paths are resolved correctly."""
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -487,7 +487,7 @@ test_cases:
             # For now, expect failure due to missing implementation
             assert result.returncode != 0, "Implementation not ready yet"
 
-    @mock_s3
+    @mock_aws
     def test_missing_file_reference_error(self):
         """Test error handling when file reference points to missing file."""
         config_content = """
@@ -536,7 +536,7 @@ test_cases:
         finally:
             Path(config_path).unlink(missing_ok=True)
 
-    @mock_s3
+    @mock_aws
     def test_binary_file_upload(self):
         """Test uploading binary files through file references."""
         # Create binary test file (simple binary content)
@@ -610,7 +610,7 @@ test_cases:
 class TestMultipleFileOperations:
     """Integration tests for multiple file operations in sequence."""
 
-    @mock_s3
+    @mock_aws
     def test_multiple_file_uploads_same_bucket(self):
         """Test uploading multiple files to the same bucket."""
         # Create multiple test files

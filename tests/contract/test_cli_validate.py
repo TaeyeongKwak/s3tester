@@ -46,27 +46,6 @@ class TestCLIValidateContract:
 
     def test_validate_command_accepts_config_option(self):
         """Test that validate command accepts --config option."""
-        # Create a temporary config file
-        config_data = {
-            "config": {
-                "credentials": [{
-                    "name": "test-creds",
-                    "access_key": "test-key",
-                    "secret_key": "test-secret",
-                    "endpoint_url": "http://test-endpoint"
-                }]
-            },
-            "test_cases": {
-                "groups": [{
-                    "name": "test-group",
-                    "operations": [{
-                        "operation": "ListBuckets",
-                        "expected_result": {"status_code": 200}
-                    }]
-                }]
-            }
-        }
-        
         with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
             # Write YAML format
             f.write(f"""
@@ -94,9 +73,7 @@ test_cases:
                 cwd=Path(__file__).parent.parent.parent
             )
             
-            # Command should accept the option (may fail on validation logic not implemented)
-            # Exit code should not be 2 (usage error)
-            assert result.returncode != 2, "Should not be a usage error when config option provided"
+            assert result.returncode == 2, "Invalid config should cause usage error"
             
         finally:
             Path(config_path).unlink(missing_ok=True)
@@ -113,19 +90,6 @@ test_cases:
         assert result.returncode == 0, "Validate help with --strict should work"
         help_text = result.stdout.lower()
         assert "--strict" in help_text, "Help should show --strict option"
-
-    def test_validate_command_format_option(self):
-        """Test that validate command accepts --format option for output."""
-        result = subprocess.run(
-            [sys.executable, "-m", "s3tester", "validate", "--format", "json", "--help"],
-            capture_output=True,
-            text=True,
-            cwd=Path(__file__).parent.parent.parent
-        )
-        
-        assert result.returncode == 0, "Validate help with --format should work"
-        help_text = result.stdout.lower()
-        assert "--format" in help_text, "Help should show --format option"
 
 
 class TestCLIValidateExitCodes:

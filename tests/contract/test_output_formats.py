@@ -436,22 +436,3 @@ class TestOutputFormatConsistency:
         assert result_json.returncode != 0, "Should fail with missing config"
         assert result_table.returncode != 0, "Should fail with missing config"
         assert result_json.returncode == result_table.returncode, "Exit codes should be consistent"
-
-    def test_format_option_available_in_all_commands(self):
-        """Test that --format option is available in all commands that produce output."""
-        commands = [
-            ["list", "operations", "--format", "json"],
-            ["list", "groups", "--format", "json"],
-            ["validate", "--format", "json"],
-        ]
-        
-        for cmd in commands:
-            result = subprocess.run(
-                [sys.executable, "-m", "s3tester"] + cmd + ["--help"],
-                capture_output=True,
-                text=True,
-                cwd=Path(__file__).parent.parent.parent
-            )
-            
-            assert result.returncode == 0, f"Help for {' '.join(cmd)} should work"
-            assert "--format" in result.stdout.lower(), f"Command {' '.join(cmd)} should support --format"

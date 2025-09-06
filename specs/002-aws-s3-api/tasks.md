@@ -81,15 +81,15 @@
 - [X] **T031** Implement test execution engine in `src/s3tester/core/engine.py` - async orchestration, ThreadPoolExecutor, before/test/after phases, parallel/sequential modes
 
 ## Phase 3.4: CLI Integration (Based on cli-implementation.md)
-- [ ] **T032** Implement output formatters in `src/s3tester/reporting/formatters.py` - JSON, YAML, table formatters, Rich console display, session formatting
-- [ ] **T033** Implement CLI commands in `src/s3tester/cli.py` - Click-based commands (run, validate, list), option handling, environment variables, exit codes
-- [ ] **T034** Implement configuration loader integration in `src/s3tester/cli/config_loader.py` - path resolution, error handling, validation integration
-- [ ] **T035** Create main entry point in `src/s3tester/__main__.py` - main() function, exception handling, signal handling
+- [X] **T032** Implement output formatters in `src/s3tester/reporting/formatters.py` - JSON, YAML, table formatters, Rich console display, session formatting
+- [X] **T033** Implement CLI commands in `src/s3tester/cli.py` - Click-based commands (run, validate, list), option handling, environment variables, exit codes
+- [X] **T034** Implement configuration loader integration in `src/s3tester/cli/config_loader.py` - path resolution, error handling, validation integration
+- [X] **T035** Create main entry point in `src/s3tester/__main__.py` - main() function, exception handling, signal handling
 
 ## Phase 3.5: Integration Architecture (Based on integration-architecture.md)
-- [ ] **T036** Implement integration interfaces in `src/s3tester/interfaces.py` - ABC definitions for major components, protocol contracts
-- [ ] **T037** Implement integration facade in `src/s3tester/integration/facade.py` - S3TesterFacade, complete workflow orchestration, service integration
-- [ ] **T038** Implement error handling patterns in `src/s3tester/integration/error_handling.py` - ErrorHandler, ErrorContext, exception wrapping and logging
+- [X] **T036** Implement integration interfaces in `src/s3tester/interfaces.py` - ABC definitions for major components, protocol contracts
+- [X] **T037** Implement integration facade in `src/s3tester/integration/facade.py` - S3TesterFacade, complete workflow orchestration, service integration
+- [X] **T038** Implement error handling patterns in `src/s3tester/integration/error_handling.py` - ErrorHandler, ErrorContext, exception wrapping and logging
 
 ## Phase 3.6: Polish and Validation
 - [ ] **T039** [P] Unit tests for data models in `tests/unit/test_models.py` - individual model validation, edge cases, serialization
