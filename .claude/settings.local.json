@@ -1,0 +1,6 @@
+{
+  "enabledMcpjsonServers": [
+    "boto3-ref"
+  ],
+  "enableAllProjectMcpServers": true
+}
