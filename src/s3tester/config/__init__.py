@@ -1,5 +1,5 @@
 """Configuration parsing and validation module."""
 
-from .models import TestConfiguration, GlobalConfig, CredentialSet
+from .models import S3TestConfiguration, GlobalConfig, CredentialSet
 
-__all__ = ["TestConfiguration", "GlobalConfig", "CredentialSet"]
+__all__ = ["S3TestConfiguration", "GlobalConfig", "CredentialSet"]

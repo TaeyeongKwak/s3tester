@@ -58,20 +58,20 @@
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
 
 ### Data Models (Based on data-model-implementation.md)
-- [ ] **T015** [P] Implement TestConfiguration model in `src/s3tester/config/models.py` - Pydantic model with include processing, validation, load_from_file method
-- [ ] **T016** [P] Implement GlobalConfig and CredentialSet models in `src/s3tester/config/models.py` - URL validation, region validation, boto3 credential conversion
-- [ ] **T017** [P] Implement TestGroup and Operation models in `src/s3tester/config/models.py` - state machine, operation validation, parameter handling
-- [ ] **T018** [P] Implement TestResult and TestSession models in `src/s3tester/config/models.py` - result comparison, session management, summary generation
-- [ ] **T019** [P] Implement FileReference model in `src/s3tester/config/models.py` - file:// URL parsing, path resolution, content reading
+- [X] **T015** [P] Implement TestConfiguration model in `src/s3tester/config/models.py` - Pydantic model with include processing, validation, load_from_file method
+- [X] **T016** [P] Implement GlobalConfig and CredentialSet models in `src/s3tester/config/models.py` - URL validation, region validation, boto3 credential conversion
+- [X] **T017** [P] Implement TestGroup and Operation models in `src/s3tester/config/models.py` - state machine, operation validation, parameter handling
+- [X] **T018** [P] Implement TestResult and TestSession models in `src/s3tester/config/models.py` - result comparison, session management, summary generation
+- [X] **T019** [P] Implement FileReference model in `src/s3tester/config/models.py` - file:// URL parsing, path resolution, content reading
 
 ### S3 Operations (Based on operations-implementation.md)
-- [ ] **T020** [P] Implement operation base classes in `src/s3tester/operations/base.py` - S3Operation ABC, OperationContext, OperationResult, error handling
-- [ ] **T021** [P] Implement parameter transformers in `src/s3tester/operations/parameters.py` - file reference resolution, bucket name validation, tagging transformation  
-- [ ] **T022** [P] Implement bucket operations in `src/s3tester/operations/bucket.py` - CreateBucket, DeleteBucket, ListBuckets, HeadBucket operations
-- [ ] **T023** [P] Implement object operations in `src/s3tester/operations/object.py` - PutObject, GetObject, DeleteObject, HeadObject operations with file handling
-- [ ] **T024** [P] Implement multipart operations in `src/s3tester/operations/multipart.py` - CreateMultipartUpload, UploadPart, CompleteMultipartUpload operations
-- [ ] **T025** [P] Implement operation registry in `src/s3tester/operations/registry.py` - OperationRegistry, operation factory, 50+ operation registration
-- [ ] **T026** [P] Implement retry logic in `src/s3tester/operations/retry.py` - exponential backoff, error classification, retryable vs non-retryable errors
+- [X] **T020** [P] Implement operation base classes in `src/s3tester/operations/base.py` - S3Operation ABC, OperationContext, OperationResult, error handling
+- [X] **T021** [P] Implement parameter transformers in `src/s3tester/operations/parameters.py` - file reference resolution, bucket name validation, tagging transformation  
+- [X] **T022** [P] Implement bucket operations in `src/s3tester/operations/bucket.py` - CreateBucket, DeleteBucket, ListBuckets, HeadBucket operations
+- [X] **T023** [P] Implement object operations in `src/s3tester/operations/object.py` - PutObject, GetObject, DeleteObject, HeadObject operations with file handling
+- [X] **T024** [P] Implement multipart operations in `src/s3tester/operations/multipart.py` - CreateMultipartUpload, UploadPart, CompleteMultipartUpload operations
+- [X] **T025** [P] Implement operation registry in `src/s3tester/operations/registry.py` - OperationRegistry, operation factory, 50+ operation registration
+- [X] **T026** [P] Implement retry logic in `src/s3tester/operations/retry.py` - exponential backoff, error classification, retryable vs non-retryable errors
 
 ### Core Engine (Based on core-engine-implementation.md)  
 - [ ] **T027** Implement S3 client factory in `src/s3tester/core/client_factory.py` - boto3 client creation, session management, credential handling, connection testing
