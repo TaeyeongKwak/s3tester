@@ -74,11 +74,11 @@
 - [X] **T026** [P] Implement retry logic in `src/s3tester/operations/retry.py` - exponential backoff, error classification, retryable vs non-retryable errors
 
 ### Core Engine (Based on core-engine-implementation.md)  
-- [ ] **T027** Implement S3 client factory in `src/s3tester/core/client_factory.py` - boto3 client creation, session management, credential handling, connection testing
-- [ ] **T028** Implement result collector in `src/s3tester/core/result_collector.py` - group aggregation, failure reporting, performance statistics
-- [ ] **T029** Implement configuration validator in `src/s3tester/core/validator.py` - comprehensive validation, credential references, file existence, S3 connectivity
-- [ ] **T030** Implement progress tracker in `src/s3tester/core/progress.py` - Rich progress display, operation tracking, group progress management
-- [ ] **T031** Implement test execution engine in `src/s3tester/core/engine.py` - async orchestration, ThreadPoolExecutor, before/test/after phases, parallel/sequential modes
+- [X] **T027** Implement S3 client factory in `src/s3tester/core/client_factory.py` - boto3 client creation, session management, credential handling, connection testing
+- [X] **T028** Implement result collector in `src/s3tester/core/result_collector.py` - group aggregation, failure reporting, performance statistics
+- [X] **T029** Implement configuration validator in `src/s3tester/core/validator.py` - comprehensive validation, credential references, file existence, S3 connectivity
+- [X] **T030** Implement progress tracker in `src/s3tester/core/progress.py` - Rich progress display, operation tracking, group progress management
+- [X] **T031** Implement test execution engine in `src/s3tester/core/engine.py` - async orchestration, ThreadPoolExecutor, before/test/after phases, parallel/sequential modes
 
 ## Phase 3.4: CLI Integration (Based on cli-implementation.md)
 - [ ] **T032** Implement output formatters in `src/s3tester/reporting/formatters.py` - JSON, YAML, table formatters, Rich console display, session formatting
