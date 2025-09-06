@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "boto3-ref": {
+      "type": "sse",
+      "url": "https://gitmcp.io/boto/boto3"
+    }
+  }
+}

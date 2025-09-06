@@ -1,0 +1,27 @@
+{
+    // Windows에서 기본 터미널을 WSL로 설정
+    "terminal.integrated.defaultProfile.windows": "Ubuntu-24.04 (WSL)",
+    
+    // 터미널 프로필 정의
+    "terminal.integrated.profiles.windows": {
+        "Ubuntu-24.04 (WSL)": {
+            "path": "C:\\Windows\\System32\\wsl.exe",
+            "args": ["-d", "Ubuntu-24.04"],
+            "icon": "terminal-ubuntu"
+        },
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell"
+        },
+        "Command Prompt": {
+            "path": "C:\\Windows\\System32\\cmd.exe",
+            "icon": "terminal-cmd"
+        }
+    },
+    
+    // Copilot이 사용할 셸 설정
+    "terminal.integrated.automationProfile.windows": {
+        "path": "C:\\Windows\\System32\\wsl.exe",
+        "args": ["-d", "Ubuntu-24.04"]
+    }
+}
