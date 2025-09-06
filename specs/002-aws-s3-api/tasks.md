@@ -31,29 +31,29 @@
 - All file paths are absolute and specific
 
 ## Phase 3.1: Setup
-- [ ] **T001** Create Python project structure: `src/s3tester/`, `tests/contract/`, `tests/integration/`, `tests/unit/`, `examples/`
-- [ ] **T002** Initialize Python project with pyproject.toml: dependencies boto3>=1.40.23, click>=8.1.0, pydantic>=2.5.0, pyyaml>=6.0.1, rich>=13.0.0, jsonschema>=4.25.1
-- [ ] **T003** [P] Configure development tools: black, mypy, pytest, pre-commit hooks in pyproject.toml
+- [X] **T001** Create Python project structure: `src/s3tester/`, `tests/contract/`, `tests/integration/`, `tests/unit/`, `examples/`
+- [X] **T002** Initialize Python project with pyproject.toml: dependencies boto3>=1.40.23, click>=8.1.0, pydantic>=2.5.0, pyyaml>=6.0.1, rich>=13.0.0, jsonschema>=4.25.1
+- [X] **T003** [P] Configure development tools: black, mypy, pytest, pre-commit hooks in pyproject.toml
 
 ## Phase 3.2: Contract Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
 
 ### CLI Contract Tests
-- [ ] **T004** [P] Contract test CLI help and version commands in `tests/contract/test_cli_help.py` - validate help text, version display, exit codes
-- [ ] **T005** [P] Contract test CLI run command structure in `tests/contract/test_cli_run.py` - validate options (--parallel, --group, --output, --timeout), exit codes 0/1/2/3  
-- [ ] **T006** [P] Contract test CLI validate command in `tests/contract/test_cli_validate.py` - validate --strict option, configuration validation, exit codes
-- [ ] **T007** [P] Contract test CLI list command in `tests/contract/test_cli_list.py` - validate list groups/operations/credentials functionality
-- [ ] **T008** [P] Contract test output formats in `tests/contract/test_output_formats.py` - validate JSON, YAML, table output structure and schema
+- [X] **T004** [P] Contract test CLI help and version commands in `tests/contract/test_cli_help.py` - validate help text, version display, exit codes
+- [X] **T005** [P] Contract test CLI run command structure in `tests/contract/test_cli_run.py` - validate options (--parallel, --group, --output, --timeout), exit codes 0/1/2/3  
+- [X] **T006** [P] Contract test CLI validate command in `tests/contract/test_cli_validate.py` - validate --strict option, configuration validation, exit codes
+- [X] **T007** [P] Contract test CLI list command in `tests/contract/test_cli_list.py` - validate list groups/operations/credentials functionality
+- [X] **T008** [P] Contract test output formats in `tests/contract/test_output_formats.py` - validate JSON, YAML, table output structure and schema
 
 ### Configuration Schema Tests
-- [ ] **T009** [P] Contract test config schema validation in `tests/contract/test_config_schema.py` - validate YAML structure, required fields, credential uniqueness, operation validation
-- [ ] **T010** [P] Contract test file path resolution in `tests/contract/test_file_paths.py` - validate file:// prefix handling, relative path resolution, file existence checks
+- [X] **T009** [P] Contract test config schema validation in `tests/contract/test_config_schema.py` - validate YAML structure, required fields, credential uniqueness, operation validation
+- [X] **T010** [P] Contract test file path resolution in `tests/contract/test_file_paths.py` - validate file:// prefix handling, relative path resolution, file existence checks
 
 ### Integration Scenario Tests  
-- [ ] **T011** [P] Integration test basic bucket operations in `tests/integration/test_basic_operations.py` - CreateBucket → HeadBucket → ListBuckets → DeleteBucket workflow using moto
-- [ ] **T012** [P] Integration test file upload workflow in `tests/integration/test_file_upload.py` - CreateBucket → PutObject with file:// → GetObject → DeleteObject → DeleteBucket using moto
-- [ ] **T013** [P] Integration test permission testing in `tests/integration/test_permissions.py` - multiple credentials, expected access denied scenarios using moto
-- [ ] **T014** [P] Integration test parallel execution in `tests/integration/test_parallel_execution.py` - concurrent operations, proper result aggregation using moto
+- [X] **T011** [P] Integration test basic bucket operations in `tests/integration/test_basic_operations.py` - CreateBucket → HeadBucket → ListBuckets → DeleteBucket workflow using moto
+- [X] **T012** [P] Integration test file upload workflow in `tests/integration/test_file_upload.py` - CreateBucket → PutObject with file:// → GetObject → DeleteObject → DeleteBucket using moto
+- [X] **T013** [P] Integration test permission testing in `tests/integration/test_permissions.py` - multiple credentials, expected access denied scenarios using moto
+- [X] **T014** [P] Integration test parallel execution in `tests/integration/test_parallel_execution.py` - concurrent operations, proper result aggregation using moto
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
 
