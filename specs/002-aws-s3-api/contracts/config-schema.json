@@ -1,0 +1,312 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.s3tester.dev/config.json",
+  "title": "S3 Tester Configuration Schema",
+  "description": "Schema for s3tester YAML configuration files",
+  "type": "object",
+  "required": ["config", "test_cases"],
+  "properties": {
+    "config": {
+      "type": "object",
+      "description": "Global configuration settings",
+      "required": ["endpoint_url", "region", "credentials"],
+      "properties": {
+        "endpoint_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "S3 service endpoint URL",
+          "examples": ["https://s3.amazonaws.com", "http://localhost:9000"]
+        },
+        "region": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9\\-]*[a-z0-9]$",
+          "description": "AWS region identifier",
+          "examples": ["us-east-1", "eu-west-1"]
+        },
+        "path_style": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use path-style URLs instead of virtual-hosted-style"
+        },
+        "credentials": {
+          "type": "array",
+          "minItems": 1,
+          "description": "List of credential sets",
+          "items": {
+            "$ref": "#/$defs/credential_set"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "test_cases": {
+      "type": "object",
+      "description": "Test execution configuration",
+      "required": ["groups"],
+      "properties": {
+        "parallel": {
+          "type": "boolean",
+          "default": false,
+          "description": "Execute test groups in parallel"
+        },
+        "groups": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Test groups to execute",
+          "items": {
+            "$ref": "#/$defs/test_group"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "include": {
+      "type": "array",
+      "description": "External configuration files to include",
+      "items": {
+        "type": "string",
+        "description": "Path to external YAML configuration file"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "credential_set": {
+      "type": "object",
+      "description": "AWS credentials for S3 operations",
+      "required": ["name", "access_key", "secret_key"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique identifier for credential set",
+          "examples": ["FullAccess", "ReadOnly", "TestUser"]
+        },
+        "access_key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "AWS access key ID"
+        },
+        "secret_key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "AWS secret access key"
+        },
+        "session_token": {
+          "type": "string",
+          "description": "Optional AWS session token for temporary credentials"
+        }
+      },
+      "additionalProperties": false
+    },
+    "test_group": {
+      "type": "object",
+      "description": "Collection of related test operations",
+      "required": ["name", "credential", "test"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Descriptive name for test group"
+        },
+        "credential": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Name of credential set to use"
+        },
+        "before_test": {
+          "type": "array",
+          "description": "Operations to execute before tests",
+          "items": {
+            "$ref": "#/$defs/operation"
+          }
+        },
+        "test": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Test operations to execute",
+          "items": {
+            "$ref": "#/$defs/operation"
+          }
+        },
+        "after_test": {
+          "type": "array",
+          "description": "Operations to execute after tests (cleanup)",
+          "items": {
+            "$ref": "#/$defs/operation"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "operation": {
+      "type": "object",
+      "description": "S3 API operation with parameters and expected result",
+      "required": ["operation", "parameters"],
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "CreateBucket", "DeleteBucket", "HeadBucket", "ListBuckets",
+            "GetBucketLocation", "GetBucketVersioning", "PutBucketVersioning",
+            "ListBucketVersions", "PutObject", "GetObject", "DeleteObject",
+            "HeadObject", "CopyObject", "ListObjects", "ListObjectsV2",
+            "GetObjectVersion", "DeleteObjectVersion", "CreateMultipartUpload",
+            "UploadPart", "UploadPartCopy", "CompleteMultipartUpload",
+            "AbortMultipartUpload", "ListParts", "ListMultipartUploads",
+            "GetObjectTagging", "PutObjectTagging", "DeleteObjectTagging",
+            "GetObjectVersionTagging", "PutObjectVersionTagging",
+            "DeleteObjectVersionTagging", "GetBucketTagging", "PutBucketTagging",
+            "DeleteBucketTagging", "GetBucketLifecycleConfiguration",
+            "PutBucketLifecycleConfiguration", "DeleteBucketLifecycle",
+            "GetBucketPolicy", "PutBucketPolicy", "DeleteBucketPolicy",
+            "GetBucketPolicyStatus", "GetObjectLockConfiguration",
+            "PutObjectLockConfiguration", "GetObjectRetention",
+            "PutObjectRetention", "GetObjectLegalHold", "PutObjectLegalHold",
+            "GetBucketCors", "PutBucketCors", "DeleteBucketCors",
+            "GetPublicAccessBlock", "PutPublicAccessBlock",
+            "DeletePublicAccessBlock"
+          ],
+          "description": "S3 API operation name"
+        },
+        "credential": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Override credential set for this operation"
+        },
+        "parameters": {
+          "type": "object",
+          "description": "Operation-specific parameters",
+          "properties": {
+            "bucket": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9.-]*[a-z0-9]$",
+              "minLength": 3,
+              "maxLength": 63,
+              "description": "S3 bucket name"
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024,
+              "description": "S3 object key"
+            },
+            "body": {
+              "type": "string",
+              "description": "Object body content or file path (use file:// prefix for files)"
+            },
+            "source_bucket": {
+              "type": "string",
+              "description": "Source bucket for copy operations"
+            },
+            "source_key": {
+              "type": "string",
+              "description": "Source object key for copy operations"
+            },
+            "upload_id": {
+              "type": "string",
+              "description": "Multipart upload ID"
+            },
+            "part_number": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000,
+              "description": "Part number for multipart operations"
+            },
+            "version_id": {
+              "type": "string",
+              "description": "Object version ID"
+            },
+            "prefix": {
+              "type": "string",
+              "description": "Object key prefix for list operations"
+            },
+            "delimiter": {
+              "type": "string",
+              "maxLength": 1,
+              "description": "Delimiter for list operations"
+            },
+            "max_keys": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000,
+              "description": "Maximum number of keys to return"
+            },
+            "continuation_token": {
+              "type": "string",
+              "description": "Continuation token for paginated operations"
+            }
+          },
+          "additionalProperties": true
+        },
+        "expected_result": {
+          "$ref": "#/$defs/expected_result"
+        }
+      },
+      "additionalProperties": false
+    },
+    "expected_result": {
+      "type": "object",
+      "description": "Expected operation outcome",
+      "required": ["success"],
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether operation should succeed"
+        },
+        "error_code": {
+          "type": "string",
+          "description": "Expected S3 error code (required when success=false)",
+          "enum": [
+            "AccessDenied", "BucketAlreadyExists", "BucketAlreadyOwnedByYou",
+            "BucketNotEmpty", "InvalidBucketName", "NoSuchBucket", "NoSuchKey",
+            "InvalidRequest", "MalformedPolicy", "PolicyTooLarge",
+            "MethodNotAllowed", "PreconditionFailed", "RequestTimeout",
+            "ServiceUnavailable", "SlowDown", "InternalError",
+            "InvalidAccessKeyId", "InvalidSecurity", "SignatureDoesNotMatch",
+            "TokenRefreshRequired", "InvalidToken", "MissingSecurityHeader"
+          ]
+        },
+        "response_contains": {
+          "type": "object",
+          "description": "Expected response content validation",
+          "properties": {
+            "headers": {
+              "type": "object",
+              "description": "Expected response headers",
+              "patternProperties": {
+                "^[A-Za-z-]+$": {
+                  "type": "string"
+                }
+              }
+            },
+            "body_pattern": {
+              "type": "string",
+              "description": "Regex pattern to match in response body"
+            },
+            "metadata": {
+              "type": "object",
+              "description": "Expected object metadata",
+              "patternProperties": {
+                "^[A-Za-z0-9-]+$": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "success": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "required": ["error_code"]
+      },
+      "additionalProperties": false
+    }
+  }
+}
