@@ -1,0 +1,12 @@
+This is a sample data file for testing file uploads with s3tester.
+
+It contains multiple lines of text to demonstrate:
+- File upload functionality
+- Content verification
+- Metadata handling
+
+You can use this file as a reference for the "file://" prefix in your configuration files.
+
+File size: Small enough for quick testing
+Character encoding: UTF-8
+Content type: text/plain

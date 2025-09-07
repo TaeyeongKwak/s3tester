@@ -1,0 +1,232 @@
+---
+# S3 Tester - 성능 및 벤치마킹 테스트 설정
+# 
+# Environment Variables (optional overrides):
+#   S3TESTER_ENDPOINT_URL: S3 endpoint URL (default: http://localhost:9000)
+#   S3TESTER_REGION: AWS region (default: us-east-1)
+
+config:
+  endpoint_url: "${S3TESTER_ENDPOINT_URL:-http://localhost:9000}"  # MinIO 또는 다른 S3 호환 서비스
+  region: "${S3TESTER_REGION:-us-east-1}"
+  path_style: true  # Path style URL 사용 (MinIO에 권장)
+  credentials:
+    - name: "minio-admin"
+      access_key: "PZMCf6oqkmeBEugp0WCl"  # 기본 MinIO 자격 증명
+      secret_key: "FZSe5aUOrKHS7PPZhFNYwI7hOxZszywo8jPIOUzo"  # 적절히 변경하세요
+
+test_cases:
+  parallel: true  # 병렬 테스트 활성화
+  concurrency: 10  # 병렬 실행 스레드 수
+  groups:
+    - name: "upload-performance-test"
+      credential: "minio-admin"
+      before_test:
+        - operation: "CreateBucket"
+          parameters:
+            bucket: "perf-test-bucket"
+          expected_result:
+            success: true
+      
+      test:
+        # 10KB 객체 100개 업로드 (병렬)
+        - operation: "LoopTest"
+          parameters:
+            count: 100
+            name_pattern: "small-object-{index}.txt"
+            operation:
+              name: "PutObject"
+              parameters:
+                bucket: "perf-test-bucket"
+                key: "{name}"
+                body_size: 10240  # 10KB
+          expected_result:
+            success: true
+          metrics:
+            capture: true
+            prefix: "small_object_upload"
+        
+        # 1MB 객체 20개 업로드 (병렬)
+        - operation: "LoopTest"
+          parameters:
+            count: 20
+            name_pattern: "medium-object-{index}.bin"
+            operation:
+              name: "PutObject"
+              parameters:
+                bucket: "perf-test-bucket"
+                key: "{name}"
+                body_size: 1048576  # 1MB
+          expected_result:
+            success: true
+          metrics:
+            capture: true
+            prefix: "medium_object_upload"
+        
+        # 10MB 객체 5개 업로드 (병렬)
+        - operation: "LoopTest"
+          parameters:
+            count: 5
+            name_pattern: "large-object-{index}.bin"
+            operation:
+              name: "PutObject"
+              parameters:
+                bucket: "perf-test-bucket"
+                key: "{name}"
+                body_size: 10485760  # 10MB
+          expected_result:
+            success: true
+          metrics:
+            capture: true
+            prefix: "large_object_upload"
+      
+      after_test:
+        # 테스트 객체 정리
+        - operation: "LoopTest"
+          parameters:
+            count: 100
+            name_pattern: "small-object-{index}.txt"
+            operation:
+              name: "DeleteObject"
+              parameters:
+                bucket: "perf-test-bucket"
+                key: "{name}"
+          expected_result:
+            success: true
+        
+        - operation: "LoopTest"
+          parameters:
+            count: 20
+            name_pattern: "medium-object-{index}.bin"
+            operation:
+              name: "DeleteObject"
+              parameters:
+                bucket: "perf-test-bucket"
+                key: "{name}"
+          expected_result:
+            success: true
+        
+        - operation: "LoopTest"
+          parameters:
+            count: 5
+            name_pattern: "large-object-{index}.bin"
+            operation:
+              name: "DeleteObject"
+              parameters:
+                bucket: "perf-test-bucket"
+                key: "{name}"
+          expected_result:
+            success: true
+        
+        - operation: "DeleteBucket"
+          parameters:
+            bucket: "perf-test-bucket"
+          expected_result:
+            success: true
+    
+    - name: "download-performance-test"
+      credential: "minio-admin"
+      before_test:
+        - operation: "CreateBucket"
+          parameters:
+            bucket: "download-perf-test-bucket"
+          expected_result:
+            success: true
+        
+        # 다양한 크기의 테스트 객체 생성
+        - operation: "PutObject"
+          parameters:
+            bucket: "download-perf-test-bucket"
+            key: "download-small.txt"
+            body_size: 10240  # 10KB
+          expected_result:
+            success: true
+        
+        - operation: "PutObject"
+          parameters:
+            bucket: "download-perf-test-bucket"
+            key: "download-medium.bin"
+            body_size: 1048576  # 1MB
+          expected_result:
+            success: true
+        
+        - operation: "PutObject"
+          parameters:
+            bucket: "download-perf-test-bucket"
+            key: "download-large.bin"
+            body_size: 10485760  # 10MB
+          expected_result:
+            success: true
+      
+      test:
+        # 10KB 객체 다운로드 벤치마크 (50회 반복)
+        - operation: "LoopTest"
+          parameters:
+            count: 50
+            operation:
+              name: "GetObject"
+              parameters:
+                bucket: "download-perf-test-bucket"
+                key: "download-small.txt"
+          expected_result:
+            success: true
+          metrics:
+            capture: true
+            prefix: "small_object_download"
+        
+        # 1MB 객체 다운로드 벤치마크 (20회 반복)
+        - operation: "LoopTest"
+          parameters:
+            count: 20
+            operation:
+              name: "GetObject"
+              parameters:
+                bucket: "download-perf-test-bucket"
+                key: "download-medium.bin"
+          expected_result:
+            success: true
+          metrics:
+            capture: true
+            prefix: "medium_object_download"
+        
+        # 10MB 객체 다운로드 벤치마크 (5회 반복)
+        - operation: "LoopTest"
+          parameters:
+            count: 5
+            operation:
+              name: "GetObject"
+              parameters:
+                bucket: "download-perf-test-bucket"
+                key: "download-large.bin"
+          expected_result:
+            success: true
+          metrics:
+            capture: true
+            prefix: "large_object_download"
+      
+      after_test:
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "download-perf-test-bucket"
+            key: "download-small.txt"
+          expected_result:
+            success: true
+        
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "download-perf-test-bucket"
+            key: "download-medium.bin"
+          expected_result:
+            success: true
+        
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "download-perf-test-bucket"
+            key: "download-large.bin"
+          expected_result:
+            success: true
+        
+        - operation: "DeleteBucket"
+          parameters:
+            bucket: "download-perf-test-bucket"
+          expected_result:
+            success: true

@@ -1,0 +1,68 @@
+# Simple S3 Operations Test Configuration
+# This example demonstrates basic bucket and object operations
+# 
+# Environment Variables (optional overrides):
+#   S3TESTER_ENDPOINT_URL: S3 endpoint URL (default: http://localhost:9000)
+#   S3TESTER_REGION: AWS region (default: us-east-1)
+
+config:
+  endpoint_url: "${S3TESTER_ENDPOINT_URL:-http://localhost:9000}"  # MinIO default endpoint
+  region: "${S3TESTER_REGION:-us-east-1}"
+  path_style: true  # Required for MinIO and some S3-compatible services
+  credentials:
+    - name: "minio-admin"
+      access_key: "PZMCf6oqkmeBEugp0WCl"
+      secret_key: "FZSe5aUOrKHS7PPZhFNYwI7hOxZszywo8jPIOUzo"
+
+test_cases:
+  parallel: false  # Run test groups sequentially
+  groups:
+    - name: "object-operations"
+      credential: "minio-admin"
+      before_test:
+        # Ensure the bucket exists before object operations
+        - operation: "CreateBucket"
+          parameters:
+            bucket: "test-bucket-simple"
+          expected_result:
+            success: true
+      test:
+        # Put an object
+        - operation: "PutObject"
+          parameters:
+            bucket: "test-bucket-simple"
+            key: "test-file.txt"
+            body: "Hello, S3 World! This is a test file."
+          expected_result:
+            success: true
+        
+        # Get the object we just created
+        - operation: "GetObject"
+          parameters:
+            bucket: "test-bucket-simple"
+            key: "test-file.txt"
+          expected_result:
+            success: true
+        
+        # Check object metadata
+        - operation: "HeadObject"
+          parameters:
+            bucket: "test-bucket-simple"
+            key: "test-file.txt"
+          expected_result:
+            success: true
+      after_test:
+        # Delete the object
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "test-bucket-simple"
+            key: "test-file.txt"
+          expected_result:
+            success: true
+        
+        # Delete the bucket
+        - operation: "DeleteBucket"
+          parameters:
+            bucket: "test-bucket-simple"
+          expected_result:
+            success: true

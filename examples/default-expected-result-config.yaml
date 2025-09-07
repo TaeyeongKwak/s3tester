@@ -1,0 +1,56 @@
+# S3 Operations Test Configuration with Default ExpectedResult
+# This example demonstrates operations without explicitly specifying expected_result
+# 
+# Environment Variables (optional overrides):
+#   S3TESTER_ENDPOINT_URL: S3 endpoint URL (default: http://localhost:9000)
+#   S3TESTER_REGION: AWS region (default: us-east-1)
+
+config:
+  endpoint_url: "${S3TESTER_ENDPOINT_URL:-http://localhost:9000}"  # MinIO default endpoint
+  region: "${S3TESTER_REGION:-us-east-1}"
+  path_style: true  # Required for MinIO and some S3-compatible services
+  credentials:
+    - name: "minio-admin"
+      access_key: "PZMCf6oqkmeBEugp0WCl"
+      secret_key: "FZSe5aUOrKHS7PPZhFNYwI7hOxZszywo8jPIOUzo"
+
+test_cases:
+  parallel: false  # Run test groups sequentially
+  groups:
+    - name: "default-expected-result-test"
+      credential: "minio-admin"
+      before_test:
+        # Create bucket without specifying expected_result (should default to success=True)
+        - operation: "CreateBucket"
+          parameters:
+            bucket: "test-bucket-defaults"
+      test:
+        # Put an object without specifying expected_result
+        - operation: "PutObject"
+          parameters:
+            bucket: "test-bucket-defaults"
+            key: "test-file.txt"
+            body: "Testing default expected results"
+        
+        # Get the object without specifying expected_result
+        - operation: "GetObject"
+          parameters:
+            bucket: "test-bucket-defaults"
+            key: "test-file.txt"
+        
+        # Check object metadata without specifying expected_result
+        - operation: "HeadObject"
+          parameters:
+            bucket: "test-bucket-defaults"
+            key: "test-file.txt"
+      after_test:
+        # Delete the object without specifying expected_result
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "test-bucket-defaults"
+            key: "test-file.txt"
+        
+        # Delete the bucket without specifying expected_result
+        - operation: "DeleteBucket"
+          parameters:
+            bucket: "test-bucket-defaults"

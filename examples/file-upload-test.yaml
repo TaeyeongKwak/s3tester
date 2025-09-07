@@ -1,0 +1,211 @@
+---
+# S3 Tester - 파일 업로드 및 파일 관련 작업 테스트 설정
+# 
+# Environment Variables (optional overrides):
+#   S3TESTER_ENDPOINT_URL: S3 endpoint URL (default: http://localhost:9000)
+#   S3TESTER_REGION: AWS region (default: us-east-1)
+
+config:
+  endpoint_url: "${S3TESTER_ENDPOINT_URL:-http://localhost:9000}"  # MinIO 또는 다른 S3 호환 서비스
+  region: "${S3TESTER_REGION:-us-east-1}"
+  path_style: true  # Path style URL 사용 (MinIO에 권장)
+  credentials:
+    - name: "minio-admin"
+      access_key: "PZMCf6oqkmeBEugp0WCl"  # 기본 MinIO 자격 증명
+      secret_key: "FZSe5aUOrKHS7PPZhFNYwI7hOxZszywo8jPIOUzo"  # 적절히 변경하세요
+
+test_cases:
+  parallel: false
+  groups:
+    - name: "file-upload-test"
+      credential: "minio-admin"
+      before_test:
+        - operation: "CreateBucket"
+          parameters:
+            bucket: "file-upload-test-bucket"
+          expected_result:
+            success: true
+      
+      test:
+        # 로컬 파일에서 직접 업로드
+        - operation: "PutObject"
+          parameters:
+            bucket: "file-upload-test-bucket"
+            key: "sample.txt"
+            file_path: "./test-data/sample.txt"
+          expected_result:
+            success: true
+        
+        # GetObject로 파일 다운로드
+        - operation: "GetObject"
+          parameters:
+            bucket: "file-upload-test-bucket"
+            key: "sample.txt"
+            output_file: "./test-data/downloaded-sample.txt"
+          expected_result:
+            success: true
+        
+        # 바이너리 데이터 파일 업로드
+        - operation: "PutObject"
+          parameters:
+            bucket: "file-upload-test-bucket"
+            key: "binary-data.bin"
+            file_path: "./test-data/binary-data.bin"
+          expected_result:
+            success: true
+        
+        # 멀티파트 업로드 테스트 (큰 파일 업로드)
+        - operation: "CreateMultipartUpload"
+          parameters:
+            bucket: "file-upload-test-bucket"
+            key: "multipart-object.bin"
+          expected_result:
+            success: true
+          store_output:
+            upload_id: "UploadId"
+        
+        # 첫 번째 파트 업로드
+        - operation: "UploadPart"
+          parameters:
+            bucket: "file-upload-test-bucket"
+            key: "multipart-object.bin"
+            upload_id: "${upload_id}"
+            part_number: 1
+            file_path: "./test-data/binary-data.bin"
+          expected_result:
+            success: true
+          store_output:
+            part_etag_1: "ETag"
+        
+        # 두 번째 파트 업로드
+        - operation: "UploadPart"
+          parameters:
+            bucket: "file-upload-test-bucket"
+            key: "multipart-object.bin"
+            upload_id: "${upload_id}"
+            part_number: 2
+            file_path: "./test-data/sample.txt"
+          expected_result:
+            success: true
+          store_output:
+            part_etag_2: "ETag"
+        
+        # 멀티파트 업로드 완료
+        - operation: "CompleteMultipartUpload"
+          parameters:
+            bucket: "file-upload-test-bucket"
+            key: "multipart-object.bin"
+            upload_id: "${upload_id}"
+            multipart_upload:
+              parts:
+                - part_number: 1
+                  etag: "${part_etag_1}"
+                - part_number: 2
+                  etag: "${part_etag_2}"
+          expected_result:
+            success: true
+        
+        # 여러 파일을 한 번에 테스트
+        - operation: "ListObjects"
+          parameters:
+            bucket: "file-upload-test-bucket"
+          expected_result:
+            success: true
+            contains:
+              - "sample.txt"
+              - "binary-data.bin"
+              - "multipart-object.bin"
+      
+      after_test:
+        # 테스트 객체 정리
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "file-upload-test-bucket"
+            key: "sample.txt"
+          expected_result:
+            success: true
+        
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "file-upload-test-bucket"
+            key: "binary-data.bin"
+          expected_result:
+            success: true
+        
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "file-upload-test-bucket"
+            key: "multipart-object.bin"
+          expected_result:
+            success: true
+        
+        - operation: "DeleteBucket"
+          parameters:
+            bucket: "file-upload-test-bucket"
+          expected_result:
+            success: true
+    
+    - name: "presigned-url-test"
+      credential: "minio-admin"
+      before_test:
+        - operation: "CreateBucket"
+          parameters:
+            bucket: "presigned-url-test-bucket"
+          expected_result:
+            success: true
+      
+      test:
+        # 업로드용 미리 서명된 URL 생성
+        - operation: "GetPresignedURL"
+          parameters:
+            bucket: "presigned-url-test-bucket"
+            key: "presigned-upload.txt"
+            method: "PUT"
+            expires_in: 3600
+          expected_result:
+            success: true
+          store_output:
+            presigned_put_url: "URL"
+        
+        # 다운로드용 미리 서명된 URL 생성
+        - operation: "PutObject"
+          parameters:
+            bucket: "presigned-url-test-bucket"
+            key: "presigned-download.txt"
+            body: "이 파일은 미리 서명된 URL로 다운로드됩니다."
+          expected_result:
+            success: true
+        
+        - operation: "GetPresignedURL"
+          parameters:
+            bucket: "presigned-url-test-bucket"
+            key: "presigned-download.txt"
+            method: "GET"
+            expires_in: 3600
+          expected_result:
+            success: true
+          store_output:
+            presigned_get_url: "URL"
+        
+        # 미리 서명된 URL 사용 테스트 (HTTP 요청)
+        - operation: "HTTPRequest"
+          parameters:
+            url: "${presigned_get_url}"
+            method: "GET"
+          expected_result:
+            status_code: 200
+            contains: "이 파일은 미리 서명된 URL로 다운로드됩니다."
+      
+      after_test:
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "presigned-url-test-bucket"
+            key: "presigned-download.txt"
+          expected_result:
+            success: true
+        
+        - operation: "DeleteBucket"
+          parameters:
+            bucket: "presigned-url-test-bucket"
+          expected_result:
+            success: true
