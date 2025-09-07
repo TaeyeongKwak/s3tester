@@ -1,0 +1,64 @@
+# File Upload Test Configuration
+# This example demonstrates uploading files from the filesystem
+# 
+# Environment Variables (optional overrides):
+#   S3TESTER_ENDPOINT_URL: S3 endpoint URL (default: http://localhost:9000)
+#   S3TESTER_REGION: AWS region (default: us-east-1)
+
+config:
+  endpoint_url: "${S3TESTER_ENDPOINT_URL:-http://localhost:9000}"  # MinIO default endpoint
+  region: "${S3TESTER_REGION:-us-east-1}"
+  path_style: true  # Required for MinIO and some S3-compatible services
+  credentials:
+    - name: "minio-admin"
+      access_key: "PZMCf6oqkmeBEugp0WCl"
+      secret_key: "FZSe5aUOrKHS7PPZhFNYwI7hOxZszywo8jPIOUzo"
+
+test_cases:
+  parallel: false
+  groups:
+    - name: "file-upload-test"
+      credential: "minio-admin"
+      before_test:
+        # Create bucket for testing
+        - operation: "CreateBucket"
+          parameters:
+            bucket: "test-bucket-files"
+      
+      test:
+        # Upload sample data file
+        - operation: "PutObject"
+          parameters:
+            bucket: "test-bucket-files"
+            key: "uploaded-sample.txt"
+            body: "file://examples/sample-data.txt"  # Upload from local file
+          expected_result:
+            success: true
+        
+        # Verify the upload by downloading
+        - operation: "GetObject"
+          parameters:
+            bucket: "test-bucket-files"
+            key: "uploaded-sample.txt"
+          expected_result:
+            success: true
+        
+        # Check object metadata
+        - operation: "HeadObject"
+          parameters:
+            bucket: "test-bucket-files"
+            key: "uploaded-sample.txt"
+          expected_result:
+            success: true
+      
+      after_test:
+        # Clean up
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "test-bucket-files"
+            key: "uploaded-sample.txt"
+        
+        # Delete test bucket
+        - operation: "DeleteBucket"
+          parameters:
+            bucket: "test-bucket-files"

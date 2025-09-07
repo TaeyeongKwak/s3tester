@@ -1,0 +1,173 @@
+# Logging and Error Handling Demo Configuration
+# 
+# This configuration demonstrates the enhanced logging and error handling
+# features of S3Tester v0.1.0.
+#
+# Usage:
+# - Standard logging: s3tester run examples/logging-demo-config.yaml
+# - JSON logging: s3tester --log-format json run examples/logging-demo-config.yaml
+# - Debug logging: s3tester --log-level DEBUG run examples/logging-demo-config.yaml
+
+config:
+  endpoint_url: "http://localhost:9000"  
+  region: "us-east-1"
+  path_style: true
+  
+  credentials:
+    - name: "admin"
+      access_key: "minioadmin"
+      secret_key: "minioadmin"
+
+test_cases:
+  parallel: false
+  
+  groups:
+    # Group 1: Successful Operations (shows success logging)
+    - name: "successful-operations"
+      description: "Demonstrates successful operations with detailed logging"
+      credential: "admin"
+      
+      before:
+        - operation: "CreateBucket"
+          parameters:
+            bucket: "logging-demo-{{uuid}}"
+          expected_result:
+            success: true
+
+      test:
+        - operation: "PutObject"
+          parameters:
+            bucket: "logging-demo-{{uuid}}"
+            key: "test-file-1.txt"
+            body: "This operation should succeed and log success metrics"
+          expected_result:
+            success: true
+            
+        - operation: "GetObject"
+          parameters:
+            bucket: "logging-demo-{{uuid}}"
+            key: "test-file-1.txt"
+          expected_result:
+            success: true
+            
+        - operation: "HeadObject" 
+          parameters:
+            bucket: "logging-demo-{{uuid}}"
+            key: "test-file-1.txt"
+          expected_result:
+            success: true
+
+      after:
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "logging-demo-{{uuid}}"
+            key: "test-file-1.txt"
+        - operation: "DeleteBucket"
+          parameters:
+            bucket: "logging-demo-{{uuid}}"
+
+    # Group 2: Error Scenarios (shows error logging and handling)
+    - name: "error-scenarios"
+      description: "Demonstrates error handling and logging"
+      credential: "admin"
+      
+      test:
+        # Expected failure: bucket doesn't exist
+        - operation: "GetObject"
+          parameters:
+            bucket: "non-existent-bucket-{{uuid}}"
+            key: "some-file.txt"
+          expected_result:
+            success: false
+            error_code: "NoSuchBucket"
+            
+        # Expected failure: object doesn't exist
+        - operation: "GetObject"  
+          parameters:
+            bucket: "logging-demo-{{uuid}}"
+            key: "non-existent-file.txt"
+          expected_result:
+            success: false
+            error_code: "NoSuchKey"
+
+    # Group 3: Performance Monitoring (shows timing logs)
+    - name: "performance-monitoring"
+      description: "Demonstrates performance logging and metrics"
+      credential: "admin"
+      
+      before:
+        - operation: "CreateBucket"
+          parameters:
+            bucket: "perf-test-{{uuid}}"
+
+      test:
+        # Multiple operations to show timing variations
+        - operation: "PutObject"
+          parameters:
+            bucket: "perf-test-{{uuid}}"
+            key: "small-file.txt"
+            body: "Small content"
+          expected_result:
+            success: true
+            
+        - operation: "PutObject"
+          parameters:
+            bucket: "perf-test-{{uuid}}"
+            key: "medium-file.txt" 
+            body: "file://examples/sample-data.txt"
+          expected_result:
+            success: true
+            
+        - operation: "PutObject"
+          parameters:
+            bucket: "perf-test-{{uuid}}"
+            key: "large-content.txt"
+            body: "This is a larger piece of content that might take slightly longer to upload than the small content. The timing differences will be visible in the structured logs."
+          expected_result:
+            success: true
+            
+        # Batch operations to show concurrent logging
+        - operation: "ListObjectsV2"
+          parameters:
+            bucket: "perf-test-{{uuid}}"
+          expected_result:
+            success: true
+
+      after:
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "perf-test-{{uuid}}"
+            key: "small-file.txt"
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "perf-test-{{uuid}}"
+            key: "medium-file.txt"
+        - operation: "DeleteObject"
+          parameters:
+            bucket: "perf-test-{{uuid}}"
+            key: "large-content.txt"
+        - operation: "DeleteBucket"
+          parameters:
+            bucket: "perf-test-{{uuid}}"
+
+    # Group 4: Validation Errors (shows input validation)
+    - name: "validation-demos"
+      description: "Demonstrates input validation with clear error messages"
+      credential: "admin"
+      
+      test:
+        # This will show validation error for invalid bucket name
+        - operation: "CreateBucket"
+          parameters:
+            bucket: "Invalid..Bucket..Name"  # Invalid: consecutive periods
+          expected_result:
+            success: false
+            
+        # This will show validation error for missing required parameter
+        - operation: "PutObject"
+          parameters:
+            # Missing required 'bucket' parameter
+            key: "test-file.txt"
+            body: "test content"
+          expected_result:
+            success: false
