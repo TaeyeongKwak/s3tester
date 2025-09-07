@@ -45,6 +45,9 @@ dev = [
     "types-pyyaml>=6.0.12",
     "types-setuptools>=69.0.0",
 ]
+build = [
+    "pyinstaller>=6.0.0",
+]
 
 [project.scripts]
 s3tester = "s3tester.cli:main"
@@ -120,6 +123,7 @@ markers = [
     "contract: marks tests as contract tests",
 ]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.coverage.run]
 source = ["src/s3tester"]

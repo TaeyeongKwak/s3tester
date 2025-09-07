@@ -9,14 +9,14 @@ __author__ = "s3tester Development Team"
 __description__ = "S3 API compatibility testing tool"
 
 # Export main components
-from .config.models import TestConfiguration, TestSession
-from .core.engine import TestExecutionEngine
-from .cli import main
+from .config.models import S3TestConfiguration, S3TestSession
+from .core.engine import S3TestExecutionEngine
+from .cli_main import main
 
 __all__ = [
     "__version__",
-    "TestConfiguration", 
-    "TestSession",
-    "TestExecutionEngine",
+    "S3TestConfiguration", 
+    "S3TestSession",
+    "S3TestExecutionEngine",
     "main"
 ]
