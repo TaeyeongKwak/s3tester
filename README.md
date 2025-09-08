@@ -194,9 +194,6 @@ mypy src/s3tester
 
 # 린팅
 ruff check src/ tests/
-
-# 모든 품질 검사 실행
-pre-commit run --all-files
 ```
 
 ## 📖 설정 파일 예제
