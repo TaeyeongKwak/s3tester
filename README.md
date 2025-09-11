@@ -41,16 +41,16 @@ pip install -e .
 s3tester list --supported-operations
 
 # 설정 파일 검증
-s3tester validate examples/simple-config.yaml
+s3tester validate --config examples/simple-config.yaml
 
 # 테스트 실행
-s3tester run examples/simple-config.yaml
+s3tester run --config examples/simple-config.yaml
 
 # JSON 형식으로 결과 출력 (구조화된 로깅 포함)
-s3tester run examples/simple-config.yaml --format json --output results.json
+s3tester run --config examples/simple-config.yaml --format json --output results.json
 
 # 상세 로그 포함 실행
-s3tester --log-level DEBUG --log-format json run examples/simple-config.yaml
+s3tester --log-level DEBUG --log-format json run --config examples/simple-config.yaml
 ```
 
 ## 📋 요구사항
@@ -277,13 +277,13 @@ s3tester --log-level DEBUG --log-format json --log-file s3test.log [COMMAND]
 s3tester list --supported-operations
 
 # 설정 검증
-s3tester validate config.yaml [--strict]
+s3tester validate --config config.yaml [--strict]
 
 # 테스트 실행
-s3tester run config.yaml [OPTIONS]
+s3tester run --config config.yaml [OPTIONS]
 
 # 테스트 실행 옵션:
-#   --parallel              병렬 실행 모드
+#   --parallel             병렬 실행 모드
 #   --group GROUP          특정 그룹만 실행
 #   --format FORMAT        출력 형식 (json|yaml|table)
 #   --output FILE          결과를 파일로 저장
@@ -339,7 +339,6 @@ s3tester/
 ## 🆘 지원
 
 - **이슈 트래커**: [GitHub Issues](https://github.com/TaeyeongKwak/s3tester/issues)
-- **토론**: [GitHub Discussions](https://github.com/TaeyeongKwak/s3tester/discussions)
 
 ## 📊 상태
 
