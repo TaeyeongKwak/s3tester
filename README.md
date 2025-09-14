@@ -123,6 +123,9 @@ ls dist/
 # PyInstaller 빌드 의존성 설치
 pip install -e ".[build]"
 
+# spec 파일 생성 (최초 1회만 필요)
+pyi-makespec --onefile --console --name s3tester src/s3tester/__main__.py
+
 # 바이너리 빌드 (Linux/macOS)
 ./build_binary.sh
 
